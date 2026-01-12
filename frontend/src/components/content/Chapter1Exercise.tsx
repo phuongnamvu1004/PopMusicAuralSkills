@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { AudioButton } from '../AudioButton';
 import { audio } from '../../lib/audio';
 import { Trophy, Target, RotateCcw } from 'lucide-react';
@@ -16,7 +16,10 @@ const scaleDigrees: ScaleDegree[] = [
 ];
 
 export function Chapter1Exercise() {
-  const [currentDegree, setCurrentDegree] = useState<ScaleDegree | null>(null);
+  const [currentDegree, setCurrentDegree] = useState<ScaleDegree | null>(() => {
+    const randomIndex = Math.floor(Math.random() * scaleDigrees.length);
+    return scaleDigrees[randomIndex];
+  });
   const [feedback, setFeedback] = useState<{ type: 'correct' | 'incorrect' | null, message: string }>({ type: null, message: '' });
   const [score, setScore] = useState({ correct: 0, total: 0 });
   const [hasPlayed, setHasPlayed] = useState(false);
@@ -29,7 +32,7 @@ export function Chapter1Exercise() {
     const randomIndex = Math.floor(Math.random() * scaleDigrees.length);
     const randomDegree = scaleDigrees[randomIndex];
     setCurrentDegree(randomDegree);
-  }, [scaleDigrees]);
+  }, []);
 
   const playCurrentDegree = () => {
     if (currentDegree) {
@@ -69,10 +72,6 @@ export function Chapter1Exercise() {
     setScore({ correct: 0, total: 0 });
     setupNewQuestion();
   };
-
-  useEffect(() => {
-    setupNewQuestion();
-  }, []);
 
   const accuracy = score.total > 0 ? Math.round((score.correct / score.total) * 100) : 0;
 

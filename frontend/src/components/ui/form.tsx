@@ -18,7 +18,6 @@ import { Label } from "./label";
 
 const Form = FormProvider;
 
-// eslint-disable-next-line react-refresh/only-export-components
 type FormFieldContextValue<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
@@ -158,6 +157,7 @@ function FormMessage({ className, ...props }: React.ComponentProps<"p">) {
 }
 
 export {
+  // eslint-disable-next-line react-refresh/only-export-components
   useFormField,
   Form,
   FormItem,

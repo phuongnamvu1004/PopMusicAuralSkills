@@ -44,7 +44,6 @@ type SidebarContextProps = {
 
 const SidebarContext = React.createContext<SidebarContextProps | null>(null);
 
-// eslint-disable-next-line react-refresh/only-export-components
 function useSidebar() {
   const context = React.useContext(SidebarContext);
   if (!context) {
@@ -723,5 +722,6 @@ export {
   SidebarRail,
   SidebarSeparator,
   SidebarTrigger,
+  // eslint-disable-next-line react-refresh/only-export-components
   useSidebar,
 };
