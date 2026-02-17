@@ -1,0 +1,86 @@
+{
+  "id": "wmyb_1A",
+  "title": "1A: What Makes You Beautiful – One Direction",
+  "meta": {
+    "source": "PopMusicAuralSkills.com",
+    "level": "1A: 1, 2, 3",
+    "key": "E Major",
+    "cue": "…EVERYONE ELSE IN THE ROOM CAN SEE IT, EVERYONE ELSE BUT YOU (0:30)"
+  },
+  "lines": [
+    {
+      "lineId": "L1",
+      "blanks": ["L1_B1","L1_B2","L1_B3","L1_B4","L1_B5","L1_B6","L1_B7","L1_B8"],
+      "lyric": "BA- BY YOU LIGHT UP  MY WORLD LIKE"
+    },
+    {
+      "lineId": "L2",
+      "blanks": ["L2_B1","L2_B2","L2_B3","L2_B4","L2_B5","L2_B6","L2_B7"],
+      "lyric": "NO- BO- DY ELSE  THE WAY THAT"
+    },
+    {
+      "lineId": "L3",
+      "blanks": ["L3_B1","L3_B2","L3_B3","L3_B4","L3_B5","L3_B6","L3_B7","L3_B8"],
+      "lyric": "YOU FLIP YOUR HAIR GETS ME O- VER-"
+    },
+    {
+      "lineId": "L4",
+      "blanks": ["L4_B1","L4_B2","L4_B3","L4_B4","L4_B5","L4_B6","L4_B7"],
+      "lyric": "WHELMED  BUT WHEN YOU SMILE AT THE"
+    },
+    {
+      "lineId": "L5",
+      "blanks": ["L5_B1","L5_B2","L5_B3","L5_B4","L5_B5","L5_B6","L5_B7","L5_B8"],
+      "lyric": "GROUND IT AIN’T HARD TO TELL YOU DON’T"
+    },
+    {
+      "lineId": "L6",
+      "blanks": ["L6_B1","L6_B2","L6_B3","L6_B4","L6_B5","L6_B6","L6_B7"],
+      "lyric": "KNOW OH OH  YOU DON’T KNOW YOU’RE"
+    },
+    {
+      "lineId": "L7",
+      "blanks": ["L7_B1","L7_B2","L7_B3","L7_B4","L7_B5","L7_B6","L7_B7","L7_B8"],
+      "lyric": "BEAU- TI- FUL/IF ON- LY YOU SAW WHAT"
+    },
+    {
+      "lineId": "L8",
+      "blanks": ["L8_B1","L8_B2","L8_B3","L8_B4","L8_B5","L8_B6","L8_B7"],
+      "lyric": "I CAN SEE  YOU’LL UN- DER- STAND"
+    },
+    {
+      "lineId": "L9",
+      "blanks": ["L9_B1","L9_B2","L9_B3","L9_B4","L9_B5","L9_B6","L9_B7","L9_B8"],
+      "lyric": "WHY I WANT YOU SO DES- PERATE- LY"
+    },
+    {
+      "lineId": "L10",
+      "blanks": ["L10_B1","L10_B2","L10_B3","L10_B4","L10_B5","L10_B6","L10_B7","L10_B8"],
+      "lyric": "RIGHT NOW I’M LOO- KING AT YOU AND"
+    },
+    {
+      "lineId": "L11",
+      "blanks": ["L11_B1","L11_B2","L11_B3","L11_B4","L11_B5","L11_B6"],
+      "lyric": "I CAN’T BE- LIEVE  YOU DON’T"
+    },
+    {
+      "lineId": "L12",
+      "blanks": ["L12_B1","L12_B2","L12_B3","L12_B4","L12_B5","L12_B6","L12_B7"],
+      "lyric": "KNO- O- OW  YOU DON’T KNOW YOU’RE"
+    },
+    {
+      "lineId": "L13",
+      "blanks": ["L13_B1","L13_B2","L13_B3","L13_B4","L13_B5"],
+      "lyric": "BEAU- TI- FUL  OH OH"
+    },
+    {
+      "lineId": "L14",
+      "blanks": ["L14_B1","L14_B2","L14_B3","L14_B4","L14_B5","L14_B6","L14_B7"],
+      "lyric": "THAT’S WHAT MAKES YOU BEAU- TI- FUL"
+    }
+  ],
+  "ui": {
+    "renderStyle": "underscores",
+    "blankBox": { "width": 64, "height": 30, "gap": 10 }
+  }
+}

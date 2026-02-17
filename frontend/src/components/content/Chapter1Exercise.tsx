@@ -1,238 +1,350 @@
-import React, { useState } from 'react';
-import { AudioButton } from '../AudioButton';
-import { audio } from '../../lib/audio';
-import { Trophy, Target, RotateCcw } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import exerciseData from '../data/exercises/exercise-ex001.json';
+import answerKeyData from '../data/exercises/answerKey-ex001.json';
 
-interface ScaleDegree {
-  degree: number;
-  note: string;
-  label: string;
-}
+type ExerciseLine = {
+  lineId: string;
+  blanks: string[];
+  lyric: string;
+};
 
-const scaleDigrees: ScaleDegree[] = [
-  { degree: 1, note: "C4", label: "Scale Degree 1" },
-  { degree: 2, note: "D4", label: "Scale Degree 2" },
-  { degree: 3, note: "E4", label: "Scale Degree 3" },
-];
-
-export function Chapter1Exercise() {
-  const [currentDegree, setCurrentDegree] = useState<ScaleDegree | null>(() => {
-    const randomIndex = Math.floor(Math.random() * scaleDigrees.length);
-    return scaleDigrees[randomIndex];
-  });
-  const [feedback, setFeedback] = useState<{ type: 'correct' | 'incorrect' | null, message: string }>({ type: null, message: '' });
-  const [score, setScore] = useState({ correct: 0, total: 0 });
-  const [hasPlayed, setHasPlayed] = useState(false);
-  const [showReference, setShowReference] = useState(true);
-
-  const setupNewQuestion = React.useCallback(() => {
-    setFeedback({ type: null, message: '' });
-    setHasPlayed(false);
-    
-    const randomIndex = Math.floor(Math.random() * scaleDigrees.length);
-    const randomDegree = scaleDigrees[randomIndex];
-    setCurrentDegree(randomDegree);
-  }, []);
-
-  const playCurrentDegree = () => {
-    if (currentDegree) {
-      // Play tonic first for reference, then the target note
-      audio.playNote('C4', 0.5, 0);
-      audio.playNote(currentDegree.note, 0.8, 0.6);
-      setHasPlayed(true);
-    }
+type ExerciseData = {
+  id: string;
+  title: string;
+  meta: {
+    source: string;
+    level: string;
+    key: string;
+    cue: string;
   };
-
-  const playReference = () => {
-    // Play all three scale degrees in order
-    audio.playNote('C4', 0.5, 0);
-    audio.playNote('D4', 0.5, 0.6);
-    audio.playNote('E4', 0.6, 1.2);
+  lines: ExerciseLine[];
+  ui: {
+    renderStyle: 'underscores' | string;
+    blankBox: {
+      width: number;
+      height: number;
+      gap: number;
+    };
   };
+};
 
-  const checkAnswer = (selectedDegree: number) => {
-    if (!currentDegree || feedback.type) return;
-    
-    const isCorrect = selectedDegree === currentDegree.degree;
-    setScore(prev => ({ 
-      correct: prev.correct + (isCorrect ? 1 : 0), 
-      total: prev.total + 1 
-    }));
-    
-    if (isCorrect) {
-      setFeedback({ type: 'correct', message: 'Correct! Well done!' });
-      setTimeout(setupNewQuestion, 1500);
-    } else {
-      setFeedback({ type: 'incorrect', message: `Incorrect. The answer was Scale Degree ${currentDegree.degree}.` });
-      setTimeout(setupNewQuestion, 2500);
-    }
+type AnswerKey = {
+  exerciseId: string;
+  answersById: Record<string, string>;
+  grading: {
+    trim: boolean;
+    caseInsensitive: boolean;
+    allowedValues: string[];
   };
+};
 
-  const resetScore = () => {
-    setScore({ correct: 0, total: 0 });
-    setupNewQuestion();
-  };
+type Answers = Record<string, string>;
+type Results = Record<string, 'correct' | 'wrong' | 'empty'>;
 
-  const accuracy = score.total > 0 ? Math.round((score.correct / score.total) * 100) : 0;
+type ExerciseHeaderProps = {
+  title: string;
+  meta: ExerciseData['meta'];
+};
 
+type ExerciseLinesProps = {
+  lines: ExerciseLine[];
+  answers: Answers;
+  results: Results;
+  onChange: (id: string, value: string) => void;
+  blankBox: ExerciseData['ui']['blankBox'];
+};
+
+type ExerciseLineRowProps = {
+  line: ExerciseLine;
+  answers: Answers;
+  results: Results;
+  onChange: (id: string, value: string) => void;
+  blankBox: ExerciseData['ui']['blankBox'];
+};
+
+type BlankRowProps = {
+  blankIds: string[];
+  answers: Answers;
+  results: Results;
+  onChange: (id: string, value: string) => void;
+  blankBox: ExerciseData['ui']['blankBox'];
+};
+
+type BlankCellProps = {
+  id: string;
+  value: string;
+  status?: Results[string];
+  onChange: (value: string) => void;
+  size: ExerciseData['ui']['blankBox'];
+};
+
+type LyricRowProps = {
+  lyric: string;
+  blankCount: number;
+  blankBox: ExerciseData['ui']['blankBox'];
+};
+
+const exercise = exerciseData as ExerciseData;
+const answerKey = answerKeyData as AnswerKey;
+
+function ExerciseHeader({ title, meta }: ExerciseHeaderProps) {
   return (
-    <div className="max-w-4xl">
-      <h2 className="mb-4">Level 1A: Exercises</h2>
-      <p className="text-gray-600 mb-8">
-        Listen carefully and identify which scale degree you hear.
-      </p>
-
-      <div className="grid md:grid-cols-3 gap-4 mb-8">
-        <div className="bg-white rounded-lg p-4 shadow-md border border-gray-200 flex items-center gap-3">
-          <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-            <Trophy className="w-5 h-5 text-green-600" />
-          </div>
-          <div>
-            <div className="text-xs text-gray-500">Score</div>
-            <div className="text-green-600">{score.correct} / {score.total}</div>
-          </div>
+    <div className="mb-8">
+      <h2 className="mb-2">{title}</h2>
+      <div className="text-sm text-gray-600 space-y-1">
+        <div>
+          <span className="font-semibold text-gray-700">Level:</span> {meta.level}
         </div>
-
-        <div className="bg-white rounded-lg p-4 shadow-md border border-gray-200 flex items-center gap-3">
-          <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-            <Target className="w-5 h-5 text-blue-600" />
-          </div>
-          <div>
-            <div className="text-xs text-gray-500">Accuracy</div>
-            <div className="text-blue-600">{accuracy}%</div>
-          </div>
+        <div>
+          <span className="font-semibold text-gray-700">Key:</span> {meta.key}
         </div>
-
-        <button 
-          onClick={resetScore}
-          className="bg-white rounded-lg p-4 shadow-md border border-gray-200 flex items-center gap-3 hover:bg-gray-50 transition-colors"
-        >
-          <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
-            <RotateCcw className="w-5 h-5 text-gray-600" />
-          </div>
-          <div className="text-left">
-            <div className="text-xs text-gray-500">Reset</div>
-            <div className="text-gray-700 text-sm">Start Over</div>
-          </div>
-        </button>
-      </div>
-
-      {/* Reference Toggle */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-6 border border-amber-200 mb-8">
-        <div className="flex items-center justify-between mb-3">
-          <h4>Reference Tool</h4>
-          <button
-            onClick={() => setShowReference(!showReference)}
-            className="text-sm text-amber-700 hover:text-amber-800 underline"
-          >
-            {showReference ? 'Hide' : 'Show'}
-          </button>
+        <div>
+          <span className="font-semibold text-gray-700">Cue:</span> {meta.cue}
         </div>
-        {showReference && (
-          <>
-            <p className="text-gray-700 text-sm mb-4">
-              Need help? Play this reference to hear all three scale degrees in order (1-2-3).
-            </p>
-            <AudioButton 
-              label="Play Reference (1-2-3)" 
-              onPlay={playReference}
-              variant="secondary"
-            />
-          </>
-        )}
-      </div>
-
-      <div className="bg-white rounded-xl shadow-xl p-8 border border-gray-200 max-w-2xl mx-auto">
-        <h3 className="text-center mb-6">Scale Degree Identification</h3>
-        
-        <div className="text-center mb-8">
-          <div className="bg-gray-50 rounded-lg p-4 mb-4 inline-block">
-            <p className="text-sm text-gray-600 mb-2">You will hear:</p>
-            <p className="text-gray-800">Scale Degree 1 (reference) → Target Note</p>
-          </div>
-          <div>
-            <AudioButton 
-              label={hasPlayed ? "Play Again" : "Play Scale Degree"}
-              onPlay={playCurrentDegree}
-            />
-            {!hasPlayed && (
-              <p className="text-sm text-gray-500 mt-2">Click to hear the scale degree</p>
-            )}
-          </div>
+        <div>
+          <span className="font-semibold text-gray-700">Source:</span> {meta.source}
         </div>
-
-        <div className="mb-4 text-center text-sm text-gray-600">
-          Which scale degree did you hear?
-        </div>
-
-        <div className="grid grid-cols-3 gap-4 mb-6">
-          {scaleDigrees.map((scaleDegree) => (
-            <button
-              key={scaleDegree.degree}
-              onClick={() => checkAnswer(scaleDegree.degree)}
-              disabled={!!feedback.type}
-              className={`px-4 py-6 rounded-lg border-2 transition-all transform hover:scale-105 active:scale-95 disabled:cursor-not-allowed
-                ${feedback.type && scaleDegree.degree === currentDegree?.degree
-                  ? 'bg-green-100 border-green-500 text-green-700'
-                  : feedback.type === 'incorrect' && scaleDegree.degree !== currentDegree?.degree
-                  ? 'bg-gray-50 border-gray-200 text-gray-400'
-                  : 'bg-white border-gray-300 hover:border-sky-500 hover:bg-sky-50'
-                }`}
-            >
-              <div className={`text-3xl mb-2 ${
-                feedback.type && scaleDegree.degree === currentDegree?.degree
-                  ? 'text-green-600'
-                  : 'text-gray-700'
-              }`}>
-                {scaleDegree.degree}
-              </div>
-              <div className="text-xs text-gray-600">
-                {scaleDegree.degree === 1 && 'Do'}
-                {scaleDegree.degree === 2 && 'Re'}
-                {scaleDegree.degree === 3 && 'Mi'}
-              </div>
-            </button>
-          ))}
-        </div>
-
-        <div className="h-16 flex items-center justify-center">
-          {feedback.type === 'correct' && (
-            <div className="text-green-600 animate-fadeIn text-center">
-              <div className="text-2xl mb-1">✓</div>
-              <div>{feedback.message}</div>
-            </div>
-          )}
-          {feedback.type === 'incorrect' && (
-            <div className="text-red-600 animate-fadeIn text-center">
-              <div className="text-2xl mb-1">✗</div>
-              <div>{feedback.message}</div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Tips Section */}
-      <div className="bg-blue-50 rounded-xl p-6 border border-blue-200 mt-8 max-w-2xl mx-auto">
-        <h4 className="mb-3">Practice Tips</h4>
-        <ul className="space-y-2 text-sm text-gray-700">
-          <li className="flex items-start gap-2">
-            <span className="text-blue-600 mt-0.5">•</span>
-            <span>Scale degree 1 (Do) is the "home" note - it sounds stable and resolved.</span>
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-blue-600 mt-0.5">•</span>
-            <span>Scale degree 2 (Re) is one step up - it creates tension and wants to move.</span>
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-blue-600 mt-0.5">•</span>
-            <span>Scale degree 3 (Mi) is two steps up - it sounds bright and defines the major quality.</span>
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-blue-600 mt-0.5">•</span>
-            <span>Try singing the scale degree back before answering!</span>
-          </li>
-        </ul>
       </div>
     </div>
   );
+}
+
+function ExerciseLines({ lines, answers, results, onChange, blankBox }: ExerciseLinesProps) {
+  return (
+    <div className="space-y-6">
+      {lines.map((line) => (
+        <ExerciseLineRow
+          key={line.lineId}
+          line={line}
+          answers={answers}
+          results={results}
+          onChange={onChange}
+          blankBox={blankBox}
+        />
+      ))}
+    </div>
+  );
+}
+
+function ExerciseLineRow({ line, answers, results, onChange, blankBox }: ExerciseLineRowProps) {
+  return (
+    <div className="space-y-2">
+      <BlankRow
+        blankIds={line.blanks}
+        answers={answers}
+        results={results}
+        onChange={onChange}
+        blankBox={blankBox}
+      />
+      <LyricRow lyric={line.lyric} blankCount={line.blanks.length} blankBox={blankBox} />
+    </div>
+  );
+}
+
+function BlankRow({ blankIds, answers, results, onChange, blankBox }: BlankRowProps) {
+  return (
+    <div
+      className="flex flex-wrap"
+      style={{
+        columnGap: `${blankBox.gap}px`,
+        rowGap: `${blankBox.gap}px`,
+      }}
+    >
+      {blankIds.map((id) => (
+        <BlankCell
+          key={id}
+          id={id}
+          value={answers[id] ?? ''}
+          status={results[id]}
+          onChange={(value) => onChange(id, value)}
+          size={blankBox}
+        />
+      ))}
+    </div>
+  );
+}
+
+function BlankCell({ id, value, status, onChange, size }: BlankCellProps) {
+  const baseClasses =
+    'bg-transparent text-center font-semibold text-gray-800 focus:outline-none border-b-2 transition-colors';
+  const statusClasses =
+    status === 'correct'
+      ? 'border-green-500 text-green-700'
+      : status === 'wrong'
+        ? 'border-red-500 text-red-600'
+        : status === 'empty'
+          ? 'border-amber-400 text-gray-600'
+          : 'border-gray-400';
+
+  return (
+    <input
+      id={id}
+      value={value}
+      onChange={(event) => onChange(event.target.value)}
+      inputMode="numeric"
+      maxLength={1}
+      className={`${baseClasses} ${statusClasses}`}
+      style={{
+        width: `${size.width}px`,
+        height: `${size.height}px`,
+      }}
+      aria-label={`Blank ${id}`}
+    />
+  );
+}
+
+function LyricRow({ lyric, blankCount, blankBox }: LyricRowProps) {
+  const rawTokens = lyric.split(' ').filter(Boolean);
+  let tokens = rawTokens;
+
+  if (rawTokens.length > blankCount) {
+    tokens = [...rawTokens.slice(0, blankCount - 1), rawTokens.slice(blankCount - 1).join(' ')];
+  } else if (rawTokens.length < blankCount) {
+    tokens = [...rawTokens, ...Array.from({ length: blankCount - rawTokens.length }, () => '')];
+  }
+
+  return (
+    <div
+      className="grid"
+      style={{
+        gridTemplateColumns: `repeat(${blankCount}, ${blankBox.width}px)`,
+        columnGap: `${blankBox.gap}px`,
+        rowGap: `${blankBox.gap}px`,
+      }}
+    >
+      {tokens.map((token, index) => (
+        <div
+          key={`${token}-${index}`}
+          className="text-center text-sm text-gray-700 tracking-wide"
+          style={{ width: `${blankBox.width}px` }}
+        >
+          {token}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ExercisePage() {
+  const [answers, setAnswers] = useState<Answers>({});
+  const [results, setResults] = useState<Results>({});
+
+  const normalizedAnswerKey = useMemo(() => {
+    const normalize = (value: string) => {
+      let nextValue = value;
+      if (answerKey.grading.trim) {
+        nextValue = nextValue.trim();
+      }
+      if (answerKey.grading.caseInsensitive) {
+        nextValue = nextValue.toLowerCase();
+      }
+      return nextValue;
+    };
+
+    const normalized: Record<string, string> = {};
+    Object.entries(answerKey.answersById).forEach(([id, value]) => {
+      normalized[id] = normalize(value);
+    });
+
+    return { normalize, answersById: normalized };
+  }, []);
+
+  const handleChange = (id: string, value: string) => {
+    setAnswers((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
+
+    if (results[id]) {
+      setResults((prev) => {
+        const next = { ...prev };
+        delete next[id];
+        return next;
+      });
+    }
+  };
+
+  const handleCheck = () => {
+    const nextResults: Results = {};
+
+    exercise.lines.forEach((line) => {
+      line.blanks.forEach((id) => {
+        const raw = answers[id] ?? '';
+        const normalized = normalizedAnswerKey.normalize(raw);
+        if (!normalized) {
+          nextResults[id] = 'empty';
+          return;
+        }
+
+        const expected = normalizedAnswerKey.answersById[id];
+        nextResults[id] = normalized === expected ? 'correct' : 'wrong';
+      });
+    });
+
+    setResults(nextResults);
+  };
+
+  const handleClear = () => {
+    setAnswers({});
+    setResults({});
+  };
+
+  const summary = useMemo(() => {
+    const values = Object.values(results);
+    if (!values.length) return null;
+    const correct = values.filter((value) => value === 'correct').length;
+    const total = values.length;
+    return { correct, total };
+  }, [results]);
+
+  return (
+    <div className="max-w-4xl">
+      <ExerciseHeader title={exercise.title} meta={exercise.meta} />
+
+      <div className="bg-white rounded-xl shadow-xl p-8 border border-gray-200">
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+          <div>
+            <h3 className="mb-1">Worksheet</h3>
+            <p className="text-sm text-gray-500">
+              Fill in scale degrees 1–3 for each blank, then check your answers.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={handleCheck}
+              className="rounded-lg border border-sky-200 bg-sky-50 px-4 py-2 text-sm text-sky-700 transition hover:bg-sky-100"
+            >
+              Check Answers
+            </button>
+            <button
+              type="button"
+              onClick={handleClear}
+              className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-gray-600 transition hover:bg-gray-50"
+            >
+              Clear
+            </button>
+          </div>
+        </div>
+
+        {summary && (
+          <div className="mb-6 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm text-emerald-700">
+            Correct: {summary.correct} / {summary.total}
+          </div>
+        )}
+
+        <ExerciseLines
+          lines={exercise.lines}
+          answers={answers}
+          results={results}
+          onChange={handleChange}
+          blankBox={exercise.ui.blankBox}
+        />
+      </div>
+    </div>
+  );
+}
+
+export function Chapter1Exercise() {
+  return <ExercisePage />;
 }
