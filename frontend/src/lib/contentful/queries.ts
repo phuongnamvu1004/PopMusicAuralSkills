@@ -84,6 +84,42 @@ export const getContentfulEntryBySlug = async <TFields extends EntryFields,>({
     return data[`${collectionName}Collection`]?.items[0] ?? null
 }
 
+export const getContentfulEntryByField = async <TFields extends EntryFields,>({
+    collectionName,
+    fields,
+    fieldName,
+    value,
+    locale,
+    preview = false,
+}: {
+    collectionName: string
+    fields: string
+    fieldName: string
+    value: string
+    locale?: string
+    preview?: boolean
+}) => {
+    const query = `
+    query GetEntryByField($value: String!, $locale: String) {
+        ${collectionName}Collection(limit: 1, where: { ${fieldName}: $value }, locale: $locale, preview: ${preview}) {
+            items {
+                sys {
+                    id
+                }
+                ${fields}
+            }
+        }
+    }`
+
+    const data = await contentfulGraphQLFetch<Record<string, CollectionResponse<TFields>>>({
+        query,
+        variables: { value, locale },
+        preview,
+    })
+
+    return data[`${collectionName}Collection`]?.items[0] ?? null
+}
+
 export const getContentfulEntryById = async <TFields extends EntryFields,>({
     contentType,
     fields,

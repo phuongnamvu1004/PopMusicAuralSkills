@@ -1,0 +1,98 @@
+{
+  "name": "ExerciseKey",
+  "description": "",
+  "displayField": "exerciseId",
+  "fields": [
+    {
+      "id": "exerciseId",
+      "name": "ExerciseId",
+      "type": "Symbol",
+      "localized": false,
+      "required": true,
+      "validations": [
+        {
+          "unique": true
+        }
+      ],
+      "disabled": false,
+      "omitted": false
+    },
+    {
+      "id": "answersByLine",
+      "name": "AnswersByLine",
+      "type": "Object",
+      "localized": false,
+      "required": true,
+      "validations": [],
+      "disabled": false,
+      "omitted": false
+    },
+    {
+      "id": "answersById",
+      "name": "AnswersById",
+      "type": "Object",
+      "localized": false,
+      "required": true,
+      "validations": [],
+      "disabled": false,
+      "omitted": false
+    },
+    {
+      "id": "grading",
+      "name": "Grading",
+      "type": "Object",
+      "localized": false,
+      "required": true,
+      "validations": [],
+      "disabled": false,
+      "omitted": false
+    }
+  ],
+  "sys": {
+    "space": {
+      "sys": {
+        "type": "Link",
+        "linkType": "Space",
+        "id": "yvqrrbzwzgh3"
+      }
+    },
+    "id": "exerciseKey",
+    "type": "ContentType",
+    "createdAt": "2026-03-10T15:45:15.260Z",
+    "updatedAt": "2026-03-10T15:49:07.920Z",
+    "environment": {
+      "sys": {
+        "id": "master",
+        "type": "Link",
+        "linkType": "Environment"
+      }
+    },
+    "publishedVersion": 3,
+    "publishedAt": "2026-03-10T15:49:07.920Z",
+    "firstPublishedAt": "2026-03-10T15:45:15.715Z",
+    "createdBy": {
+      "sys": {
+        "type": "Link",
+        "linkType": "User",
+        "id": "032tFbPrtPgqImyX09jKg1"
+      }
+    },
+    "updatedBy": {
+      "sys": {
+        "type": "Link",
+        "linkType": "User",
+        "id": "032tFbPrtPgqImyX09jKg1"
+      }
+    },
+    "publishedCounter": 2,
+    "version": 4,
+    "publishedBy": {
+      "sys": {
+        "type": "Link",
+        "linkType": "User",
+        "id": "032tFbPrtPgqImyX09jKg1"
+      }
+    },
+    "urn": "crn:contentful:::content:spaces/yvqrrbzwzgh3/environments/master/content_types/exerciseKey"
+  }
+}

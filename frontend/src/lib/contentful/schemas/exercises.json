@@ -1,0 +1,179 @@
+{
+  "name": "Exercises",
+  "description": "",
+  "displayField": "id",
+  "fields": [
+    {
+      "id": "id",
+      "name": "Id",
+      "type": "Symbol",
+      "localized": false,
+      "required": true,
+      "validations": [
+        {
+          "unique": true
+        },
+        {
+          "regexp": {
+            "pattern": "^[a-z]+_[0-9]+[A-Z]$",
+            "flags": "i"
+          }
+        }
+      ],
+      "disabled": false,
+      "omitted": false
+    },
+    {
+      "id": "title",
+      "name": "Title",
+      "type": "Symbol",
+      "localized": false,
+      "required": true,
+      "validations": [],
+      "disabled": false,
+      "omitted": false
+    },
+    {
+      "id": "meta",
+      "name": "Meta",
+      "type": "Link",
+      "localized": false,
+      "required": false,
+      "validations": [
+        {
+          "linkContentType": [
+            "exerciseMeta"
+          ],
+          "message": "Exercise Metadata must have source, level, key and cue."
+        }
+      ],
+      "disabled": false,
+      "omitted": false,
+      "linkType": "Entry"
+    },
+    {
+      "id": "lines",
+      "name": "Lines",
+      "type": "Object",
+      "localized": false,
+      "required": true,
+      "validations": [],
+      "disabled": false,
+      "omitted": false
+    },
+    {
+      "id": "renderStyle",
+      "name": "RenderStyle",
+      "type": "Symbol",
+      "localized": false,
+      "required": false,
+      "validations": [],
+      "disabled": false,
+      "omitted": false
+    },
+    {
+      "id": "blankBox",
+      "name": "BlankBox",
+      "type": "Object",
+      "localized": false,
+      "required": false,
+      "validations": [],
+      "disabled": false,
+      "omitted": false
+    },
+    {
+      "id": "exerciseKey",
+      "name": "ExerciseKey",
+      "type": "Link",
+      "localized": false,
+      "required": true,
+      "validations": [
+        {
+          "linkContentType": [
+            "exerciseKey"
+          ]
+        }
+      ],
+      "disabled": false,
+      "omitted": false,
+      "linkType": "Entry"
+    },
+    {
+      "id": "chapterNumber",
+      "name": "ChapterNumber",
+      "type": "Integer",
+      "localized": false,
+      "required": true,
+      "validations": [],
+      "disabled": false,
+      "omitted": false
+    },
+    {
+      "id": "sectionCode",
+      "name": "SectionCode",
+      "type": "Symbol",
+      "localized": false,
+      "required": true,
+      "validations": [],
+      "disabled": false,
+      "omitted": false
+    },
+    {
+      "id": "sectionKey",
+      "name": "SectionKey",
+      "type": "Symbol",
+      "localized": false,
+      "required": true,
+      "validations": [],
+      "disabled": false,
+      "omitted": false
+    }
+  ],
+  "sys": {
+    "space": {
+      "sys": {
+        "type": "Link",
+        "linkType": "Space",
+        "id": "yvqrrbzwzgh3"
+      }
+    },
+    "id": "exercises",
+    "type": "ContentType",
+    "createdAt": "2026-03-10T15:12:28.931Z",
+    "updatedAt": "2026-04-21T16:45:33.058Z",
+    "environment": {
+      "sys": {
+        "id": "master",
+        "type": "Link",
+        "linkType": "Environment"
+      }
+    },
+    "publishedVersion": 17,
+    "publishedAt": "2026-04-21T16:45:33.058Z",
+    "firstPublishedAt": "2026-03-10T15:12:29.460Z",
+    "createdBy": {
+      "sys": {
+        "type": "Link",
+        "linkType": "User",
+        "id": "032tFbPrtPgqImyX09jKg1"
+      }
+    },
+    "updatedBy": {
+      "sys": {
+        "type": "Link",
+        "linkType": "User",
+        "id": "032tFbPrtPgqImyX09jKg1"
+      }
+    },
+    "publishedCounter": 9,
+    "version": 18,
+    "publishedBy": {
+      "sys": {
+        "type": "Link",
+        "linkType": "User",
+        "id": "032tFbPrtPgqImyX09jKg1"
+      }
+    },
+    "urn": "crn:contentful:::content:spaces/yvqrrbzwzgh3/environments/master/content_types/exercises"
+  }
+}

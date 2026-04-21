@@ -1,0 +1,115 @@
+{
+  "name": "ExerciseMeta",
+  "description": "",
+  "displayField": "exerciseId",
+  "fields": [
+    {
+      "id": "exerciseId",
+      "name": "ExerciseId",
+      "type": "Symbol",
+      "localized": false,
+      "required": true,
+      "validations": [
+        {
+          "unique": true
+        }
+      ],
+      "disabled": false,
+      "omitted": false
+    },
+    {
+      "id": "source",
+      "name": "Source",
+      "type": "Symbol",
+      "localized": false,
+      "required": true,
+      "validations": [
+        {
+          "regexp": {
+            "pattern": "^(ftp|http|https):\\/\\/(\\w+:{0,1}\\w*@)?(\\S+)(:[0-9]+)?(\\/|\\/([\\w#!:.?+=&%@!\\-/]))?$",
+            "flags": null
+          }
+        }
+      ],
+      "disabled": false,
+      "omitted": false
+    },
+    {
+      "id": "level",
+      "name": "Level",
+      "type": "Symbol",
+      "localized": false,
+      "required": true,
+      "validations": [],
+      "disabled": false,
+      "omitted": false
+    },
+    {
+      "id": "key",
+      "name": "Key",
+      "type": "Symbol",
+      "localized": false,
+      "required": true,
+      "validations": [],
+      "disabled": false,
+      "omitted": false
+    },
+    {
+      "id": "cue",
+      "name": "Cue",
+      "type": "Symbol",
+      "localized": false,
+      "required": true,
+      "validations": [],
+      "disabled": false,
+      "omitted": false
+    }
+  ],
+  "sys": {
+    "space": {
+      "sys": {
+        "type": "Link",
+        "linkType": "Space",
+        "id": "yvqrrbzwzgh3"
+      }
+    },
+    "id": "exerciseMeta",
+    "type": "ContentType",
+    "createdAt": "2026-03-10T15:27:52.577Z",
+    "updatedAt": "2026-03-10T15:50:11.836Z",
+    "environment": {
+      "sys": {
+        "id": "master",
+        "type": "Link",
+        "linkType": "Environment"
+      }
+    },
+    "publishedVersion": 3,
+    "publishedAt": "2026-03-10T15:50:11.836Z",
+    "firstPublishedAt": "2026-03-10T15:27:52.903Z",
+    "createdBy": {
+      "sys": {
+        "type": "Link",
+        "linkType": "User",
+        "id": "032tFbPrtPgqImyX09jKg1"
+      }
+    },
+    "updatedBy": {
+      "sys": {
+        "type": "Link",
+        "linkType": "User",
+        "id": "032tFbPrtPgqImyX09jKg1"
+      }
+    },
+    "publishedCounter": 2,
+    "version": 4,
+    "publishedBy": {
+      "sys": {
+        "type": "Link",
+        "linkType": "User",
+        "id": "032tFbPrtPgqImyX09jKg1"
+      }
+    },
+    "urn": "crn:contentful:::content:spaces/yvqrrbzwzgh3/environments/master/content_types/exerciseMeta"
+  }
+}
