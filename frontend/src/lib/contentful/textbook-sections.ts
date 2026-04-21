@@ -10,6 +10,17 @@ type ExerciseLink = {
     sectionKey: string
 }
 
+type HeaderVisual = {
+    sys: {
+        id: string
+    }
+    url: string
+    title?: string
+    description?: string
+    width?: number
+    height?: number
+}
+
 export type TextbookSectionEntry = {
     title: string
     description: string
@@ -18,6 +29,7 @@ export type TextbookSectionEntry = {
     sectionKey: string
     headerCaption?: string
     practiceLinks?: string
+    headerVisual?: HeaderVisual | null
     exercises?: ExerciseLink | null
 }
 
@@ -28,6 +40,16 @@ export const getTextbookSectionBySectionKey = async (sectionKey: string) => {
         value: sectionKey,
         fields: `
             title
+            headerVisual {
+                sys {
+                    id
+                }
+                url
+                title
+                description
+                width
+                height
+            }
             headerCaption
             description
             practiceLinks

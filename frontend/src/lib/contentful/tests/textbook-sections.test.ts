@@ -21,6 +21,14 @@ describe('textbookSection contentful queries', () => {
                         chapterNumber: 1,
                         sectionCode: 'A',
                         sectionKey: '1-a',
+                        headerVisual: {
+                            sys: { id: 'asset-1' },
+                            url: '//images.ctfassets.net/example.png',
+                            title: 'Section header',
+                            description: 'Header image',
+                            width: 1280,
+                            height: 720,
+                        },
                         headerCaption: 'Start here',
                         practiceLinks: 'Practice 1',
                         exercises: {
@@ -42,6 +50,14 @@ describe('textbookSection contentful queries', () => {
             chapterNumber: 1,
             sectionCode: 'A',
             sectionKey: '1-a',
+            headerVisual: {
+                sys: { id: 'asset-1' },
+                url: '//images.ctfassets.net/example.png',
+                title: 'Section header',
+                description: 'Header image',
+                width: 1280,
+                height: 720,
+            },
             headerCaption: 'Start here',
             practiceLinks: 'Practice 1',
             exercises: {
