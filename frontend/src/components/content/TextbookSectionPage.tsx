@@ -69,10 +69,16 @@ function SectionContent({ section }: { section: TextbookSectionEntry }) {
 
   return (
     <div className="max-w-4xl">
-      <h2 className="mb-2">{section.title}</h2>
+      <p className="mb-2 text-base font-medium text-gray-900">{section.title}</p>
       <p className="mb-6 text-sm font-medium uppercase tracking-[0.18em] text-sky-700">
         Chapter {section.chapterNumber} · Section {section.sectionCode}
       </p>
+
+      {section.headerCaption && (
+        <h1 className="mb-7 max-w-3xl text-5xl font-extrabold leading-tight tracking-tight text-gray-950">
+          {section.headerCaption}
+        </h1>
+      )}
 
       {headerImageUrl && (
         <div className="mb-8 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lg">
@@ -81,11 +87,6 @@ function SectionContent({ section }: { section: TextbookSectionEntry }) {
             alt={section.headerVisual?.description || section.headerVisual?.title || section.title}
             className="h-64 w-full object-cover"
           />
-          {section.headerCaption && (
-            <div className="border-t border-gray-100 px-4 py-3 text-sm text-gray-600">
-              {section.headerCaption}
-            </div>
-          )}
         </div>
       )}
 

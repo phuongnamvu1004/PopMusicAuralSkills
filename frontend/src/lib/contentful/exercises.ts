@@ -20,6 +20,9 @@ export type ExerciseKeyEntry = {
 }
 
 export type ExerciseEntry = {
+    sys: {
+        id: string
+    }
     id: string
     title: string
     chapterNumber: number
@@ -40,8 +43,29 @@ export type ExerciseEntry = {
     exerciseKey?: ExerciseKeyEntry | null
 }
 
+const sortExercises = (exercises: ExerciseEntry[]) =>
+    exercises.sort((first, second) => {
+        if (first.chapterNumber !== second.chapterNumber) {
+            return first.chapterNumber - second.chapterNumber
+        }
+
+        const sectionComparison = first.sectionCode.localeCompare(second.sectionCode, undefined, {
+            numeric: true,
+            sensitivity: 'base',
+        })
+
+        if (sectionComparison !== 0) {
+            return sectionComparison
+        }
+
+        return first.title.localeCompare(second.title, undefined, {
+            numeric: true,
+            sensitivity: 'base',
+        })
+    })
+
 export const getAllExercises = async () => {
-    return getContentfulCollection<ExerciseEntry>({
+    const exercises = await getContentfulCollection<ExerciseEntry>({
         collectionName: 'exercises',
         fields: `
             id
@@ -52,6 +76,8 @@ export const getAllExercises = async () => {
         `,
         limit: 100,
     })
+
+    return sortExercises(exercises)
 }
 
 export const getExerciseBySectionKey = async (sectionKey: string) => {
@@ -59,6 +85,37 @@ export const getExerciseBySectionKey = async (sectionKey: string) => {
         collectionName: 'exercises',
         fieldName: 'sectionKey',
         value: sectionKey,
+        fields: `
+            id
+            title
+            chapterNumber
+            sectionCode
+            sectionKey
+            lines
+            renderStyle
+            blankBox
+            meta {
+                exerciseId
+                source
+                level
+                key
+                cue
+            }
+            exerciseKey {
+                exerciseId
+                answersByLine
+                answersById
+                grading
+            }
+        `,
+    })
+}
+
+export const getExerciseById = async (id: string) => {
+    return getContentfulEntryByField<ExerciseEntry>({
+        collectionName: 'exercises',
+        fieldName: 'id',
+        value: id,
         fields: `
             id
             title

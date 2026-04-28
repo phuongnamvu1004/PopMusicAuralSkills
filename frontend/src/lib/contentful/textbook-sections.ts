@@ -1,4 +1,4 @@
-import { getContentfulEntryByField } from './queries'
+import { getContentfulCollection, getContentfulEntryByField } from './queries'
 
 type ExerciseLink = {
     sys: {
@@ -22,6 +22,9 @@ type HeaderVisual = {
 }
 
 export type TextbookSectionEntry = {
+    sys: {
+        id: string
+    }
     title: string
     description: string
     chapterNumber: number
@@ -33,38 +36,59 @@ export type TextbookSectionEntry = {
     exercises?: ExerciseLink | null
 }
 
+const textbookSectionFields = `
+    title
+    headerVisual {
+        sys {
+            id
+        }
+        url
+        title
+        description
+        width
+        height
+    }
+    headerCaption
+    description
+    practiceLinks
+    chapterNumber
+    sectionCode
+    sectionKey
+    exercises {
+        sys {
+            id
+        }
+        title
+        chapterNumber
+        sectionCode
+        sectionKey
+    }
+`
+
+export const getTextbookSections = async () => {
+    const sections = await getContentfulCollection<TextbookSectionEntry>({
+        collectionName: 'textbookSection',
+        fields: textbookSectionFields,
+        limit: 100,
+    })
+
+    return sections.sort((first, second) => {
+        if (first.chapterNumber !== second.chapterNumber) {
+            return first.chapterNumber - second.chapterNumber
+        }
+
+        return first.sectionCode.localeCompare(second.sectionCode, undefined, {
+            numeric: true,
+            sensitivity: 'base',
+        })
+    })
+}
+
 export const getTextbookSectionBySectionKey = async (sectionKey: string) => {
     return getContentfulEntryByField<TextbookSectionEntry>({
         collectionName: 'textbookSection',
         fieldName: 'sectionKey',
         value: sectionKey,
-        fields: `
-            title
-            headerVisual {
-                sys {
-                    id
-                }
-                url
-                title
-                description
-                width
-                height
-            }
-            headerCaption
-            description
-            practiceLinks
-            chapterNumber
-            sectionCode
-            sectionKey
-            exercises {
-                sys {
-                    id
-                }
-                title
-                chapterNumber
-                sectionCode
-                sectionKey
-            }
-        `,
+        fields: textbookSectionFields,
     })
 }

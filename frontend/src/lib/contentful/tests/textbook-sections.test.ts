@@ -5,7 +5,7 @@ vi.mock('../graphql', () => ({
 }))
 
 import { contentfulGraphQLFetch } from '../graphql'
-import { getTextbookSectionBySectionKey } from '../textbook-sections'
+import { getTextbookSectionBySectionKey, getTextbookSections } from '../textbook-sections'
 
 describe('textbookSection contentful queries', () => {
     it('fetches a textbook section by sectionKey', async () => {
@@ -76,5 +76,60 @@ describe('textbookSection contentful queries', () => {
             variables: { value: '1-a', locale: undefined },
             preview: false,
         })
+    })
+
+    it('fetches and sorts all textbook sections for generated navigation', async () => {
+        const mockedGraphQLFetch = vi.mocked(contentfulGraphQLFetch)
+
+        mockedGraphQLFetch.mockResolvedValue({
+            textbookSectionCollection: {
+                items: [
+                    {
+                        sys: { id: 'section-1b' },
+                        title: 'Level 1B',
+                        description: 'Next section.',
+                        chapterNumber: 1,
+                        sectionCode: 'B',
+                        sectionKey: '1-b',
+                        headerCaption: 'Second header caption',
+                    },
+                    {
+                        sys: { id: 'section-1a' },
+                        title: 'Level 1A',
+                        description: 'First section.',
+                        chapterNumber: 1,
+                        sectionCode: 'A',
+                        sectionKey: '1-a',
+                        headerCaption: 'First header caption',
+                    },
+                ],
+            },
+        })
+
+        await expect(getTextbookSections()).resolves.toMatchObject([
+            {
+                sys: { id: 'section-1a' },
+                title: 'Level 1A',
+                sectionKey: '1-a',
+                headerCaption: 'First header caption',
+            },
+            {
+                sys: { id: 'section-1b' },
+                title: 'Level 1B',
+                sectionKey: '1-b',
+                headerCaption: 'Second header caption',
+            },
+        ])
+
+        expect(mockedGraphQLFetch).toHaveBeenCalledWith({
+            query: expect.stringContaining('textbookSectionCollection(limit: $limit, locale: $locale, preview: false)'),
+            variables: { limit: 100, locale: undefined },
+            preview: false,
+        })
+        expect(mockedGraphQLFetch).toHaveBeenCalledWith(
+            expect.objectContaining({
+                query: expect.stringContaining('headerCaption'),
+            }),
+        )
     })
 })
