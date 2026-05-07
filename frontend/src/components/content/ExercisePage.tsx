@@ -31,6 +31,7 @@ type ExerciseLinesProps = {
   results: Results;
   onChange: (id: string, value: string) => void;
   blankBox: BlankBox;
+  maxAnswerLength: number;
 };
 
 type ExerciseLineRowProps = {
@@ -39,6 +40,7 @@ type ExerciseLineRowProps = {
   results: Results;
   onChange: (id: string, value: string) => void;
   blankBox: BlankBox;
+  maxAnswerLength: number;
 };
 
 type BlankRowProps = {
@@ -47,6 +49,7 @@ type BlankRowProps = {
   results: Results;
   onChange: (id: string, value: string) => void;
   blankBox: BlankBox;
+  maxAnswerLength: number;
 };
 
 type BlankCellProps = {
@@ -55,6 +58,7 @@ type BlankCellProps = {
   status?: Results[string];
   onChange: (value: string) => void;
   size: BlankBox;
+  maxLength: number;
 };
 
 type LyricRowProps = {
@@ -178,7 +182,7 @@ function ExerciseHeader({ exercise }: ExerciseHeaderProps) {
   );
 }
 
-function ExerciseLines({ lines, answers, results, onChange, blankBox }: ExerciseLinesProps) {
+function ExerciseLines({ lines, answers, results, onChange, blankBox, maxAnswerLength }: ExerciseLinesProps) {
   return (
     <div className="space-y-6">
       {lines.map((line) => (
@@ -189,13 +193,14 @@ function ExerciseLines({ lines, answers, results, onChange, blankBox }: Exercise
           results={results}
           onChange={onChange}
           blankBox={blankBox}
+          maxAnswerLength={maxAnswerLength}
         />
       ))}
     </div>
   );
 }
 
-function ExerciseLineRow({ line, answers, results, onChange, blankBox }: ExerciseLineRowProps) {
+function ExerciseLineRow({ line, answers, results, onChange, blankBox, maxAnswerLength }: ExerciseLineRowProps) {
   return (
     <div className="space-y-2">
       <BlankRow
@@ -204,13 +209,14 @@ function ExerciseLineRow({ line, answers, results, onChange, blankBox }: Exercis
         results={results}
         onChange={onChange}
         blankBox={blankBox}
+        maxAnswerLength={maxAnswerLength}
       />
       <LyricRow lyric={line.lyric} blankCount={line.blanks.length} blankBox={blankBox} />
     </div>
   );
 }
 
-function BlankRow({ blankIds, answers, results, onChange, blankBox }: BlankRowProps) {
+function BlankRow({ blankIds, answers, results, onChange, blankBox, maxAnswerLength }: BlankRowProps) {
   return (
     <div
       className="flex flex-wrap"
@@ -227,13 +233,14 @@ function BlankRow({ blankIds, answers, results, onChange, blankBox }: BlankRowPr
           status={results[id]}
           onChange={(value) => onChange(id, value)}
           size={blankBox}
+          maxLength={maxAnswerLength}
         />
       ))}
     </div>
   );
 }
 
-function BlankCell({ id, value, status, onChange, size }: BlankCellProps) {
+function BlankCell({ id, value, status, onChange, size, maxLength }: BlankCellProps) {
   const baseClasses =
     'bg-transparent text-center font-semibold text-gray-800 focus:outline-none border-b-2 transition-colors';
   const statusClasses =
@@ -250,8 +257,8 @@ function BlankCell({ id, value, status, onChange, size }: BlankCellProps) {
       id={id}
       value={value}
       onChange={(event) => onChange(event.target.value)}
-      inputMode="numeric"
-      maxLength={1}
+      inputMode="text"
+      maxLength={maxLength}
       className={`${baseClasses} ${statusClasses}`}
       style={{
         width: `${size.width}px`,
@@ -300,6 +307,10 @@ function ExerciseWorksheet({ exercise }: { exercise: ExerciseEntry }) {
   const lines = useMemo(() => getExerciseLines(exercise), [exercise]);
   const blankBox = useMemo(() => getBlankBox(exercise), [exercise]);
   const answerKey = exercise.exerciseKey;
+  const maxAnswerLength = useMemo(
+    () => Math.max(1, ...Object.values(answerKey?.answersById ?? {}).map((answer) => answer.length)),
+    [answerKey],
+  );
 
   useEffect(() => {
     setAnswers({});
@@ -431,6 +442,7 @@ function ExerciseWorksheet({ exercise }: { exercise: ExerciseEntry }) {
           results={results}
           onChange={handleChange}
           blankBox={blankBox}
+          maxAnswerLength={maxAnswerLength}
         />
       ) : (
         <p className="text-sm text-gray-500">This exercise does not have worksheet lines yet.</p>
