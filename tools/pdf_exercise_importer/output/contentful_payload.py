@@ -23,7 +23,7 @@ def parsed_exercise_to_dict(parsed: ParsedExercise) -> dict[str, object]:
             "contentType": "exercises",
             "fields": {
                 "id": parsed.exercise.id,
-                "title": parsed.exercise.title,
+                "title": _format_exercise_title(parsed),
                 "chapterNumber": parsed.exercise.chapterNumber,
                 "sectionCode": parsed.exercise.sectionCode,
                 "sectionKey": parsed.exercise.sectionKey,
@@ -36,3 +36,7 @@ def parsed_exercise_to_dict(parsed: ParsedExercise) -> dict[str, object]:
         },
     }
     return data
+
+
+def _format_exercise_title(parsed: ParsedExercise) -> str:
+    return f"{parsed.exercise.chapterNumber}{parsed.exercise.sectionCode}: {parsed.exercise.title}"

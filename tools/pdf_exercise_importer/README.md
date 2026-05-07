@@ -14,6 +14,8 @@ The first version is dry-run only: it parses a PDF and writes JSON. It does not 
 - `parsing/scale_degrees.py`: scale-degree answer recognition and normalization.
 - `parsing/parser.py`: high-level orchestration from PDF path to parsed exercise model.
 - `output/contentful_payload.py`: converts parsed models into Contentful-ready JSON.
+- `output/contentful_client.py`: uploads entries through the Contentful Management API.
+- `output/config.py`: loads importer-local environment values with `python-dotenv`.
 - `core/models.py`: dataclasses shared across the importer.
 - `tests/test_parser.py`: unit tests for parser behavior.
 
@@ -88,7 +90,7 @@ npm run build
 
 Parsing does not require Contentful credentials.
 
-Uploading entries later will require:
+Uploading entries requires:
 
 - `CONTENTFUL_MANAGEMENT_TOKEN`: Contentful Management API token with write access.
 - `CONTENTFUL_SPACE_ID`: your Contentful space id.
@@ -102,6 +104,52 @@ cp tools/pdf_exercise_importer/.env.example tools/pdf_exercise_importer/.env
 ```
 
 `tools/pdf_exercise_importer/.env` and generated JSON under `tools/pdf_exercise_importer/tmp/` are ignored by git. Those values should stay outside the frontend and should not be committed.
+
+## Upload
+
+Test credentials without creating entries:
+
+```bash
+python3 -m tools.pdf_exercise_importer.cli \
+  --test-connection
+```
+
+Dry-run JSON output remains the default. Add `--upload` to write entries to Contentful:
+
+```bash
+python3 -m tools.pdf_exercise_importer.cli \
+  --extractor auto \
+  --pdf "~/Downloads/KEY_ 5A_ Tie A Yellow Ribbon Round the Ole Oak Tree – Dawn and Tony Orlando.pdf" \
+  --id tayrrooot_5A \
+  --source "https://example.com/source" \
+  --out tools/pdf_exercise_importer/tmp/tayrrooot_5A.json \
+  --upload
+```
+
+Upload and publish:
+
+```bash
+python3 -m tools.pdf_exercise_importer.cli \
+  --extractor auto \
+  --pdf "~/Downloads/KEY_ 5A_ Tie A Yellow Ribbon Round the Ole Oak Tree – Dawn and Tony Orlando.pdf" \
+  --id tayrrooot_5A \
+  --source "https://example.com/source" \
+  --out tools/pdf_exercise_importer/tmp/tayrrooot_5A.json \
+  --upload \
+  --publish
+```
+
+By default, upload fails if an entry already exists. To overwrite existing importer-managed entries:
+
+```bash
+--update-existing
+```
+
+Entries are uploaded in dependency order:
+
+1. `exerciseMeta`
+2. `exerciseKey`
+3. `exercises`
 
 ## Notes
 
